@@ -1,5 +1,7 @@
 package com.udacity.vehicles.service;
 
+import com.netflix.appinfo.InstanceInfo;
+import com.netflix.discovery.EurekaClient;
 import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.Price;
 import com.udacity.vehicles.client.prices.PriceClient;
@@ -10,7 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Implements the car service create, read, update or delete
@@ -28,6 +32,12 @@ public class CarService {
 
     @Autowired
     private MapsClient mapsClient;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
 //    public CarService(CarRepository repository) {
 //        /**
@@ -73,7 +83,10 @@ public class CarService {
          *   the pricing service each time to get the price.
          */
         String price = priceClient.getPrice(car.getId());
-
+//        InstanceInfo instanceInfo = (InstanceInfo) discoveryClient.getInstances("PRICE-SERVICE");
+//        String baseurl = instanceInfo.getHomePageUrl();
+//        Price price2= restTemplate.getForObject(baseurl + "services/price?vehicleId="+car.getId(), Price.class);
+//        String priceEuruka =  String.format("%s %s", price2.getCurrency(), price2.getPrice());
         car.setPrice(price);
 
         /**
